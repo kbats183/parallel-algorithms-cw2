@@ -48,7 +48,7 @@ func main() {
 	log.Printf("Avg time for sequentional implementation %s", ts.String())
 
 	parallel.PForDivider = 4
-	for i := 0; i < 12; i++ {
+	for i := 0; i < 7; i++ {
 		tp := testImplementationMultiple(&g, &parallelBFS, 2)
 		log.Printf("Avg time for parallel implementation %s (%d)", tp.String(), parallel.PForDivider)
 		log.Printf("Speed up for %v", float64(ts)/float64(tp))

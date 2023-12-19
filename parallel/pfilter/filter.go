@@ -4,9 +4,9 @@ import (
 	"github.com/kbats183/parallel-algorithms-cw2/parallel"
 )
 
-func Filter(array []int, predicate func(index int, value int) bool) []int {
+func Filter(array []int, predicate func(index int, value int) bool, result []int) int {
 	if len(array) == 0 {
-		return []int{}
+		return 0
 	}
 
 	dv := parallel.PForDivider
@@ -20,41 +20,11 @@ func Filter(array []int, predicate func(index int, value int) bool) []int {
 
 	s := parallel.Pow2Size(dv)
 	b := make([]int, (s<<1)-1)
-	//c := make([]int, parallel.PForDivider)
 	filterReduceImpl(array, 0, len(array), 0, b, predicate, blockSize)
-	//fmt.Printf("?%v\n", b)
 	filterScanPropagate(b, 0, len(array), 0, 0, blockSize)
-	//fmt.Printf("!%v\n", b)
-
-	//fmt.Printf("%v\n", b)
-	//fmt.Printf("%v\n", array)
-
-	//flags := parallel.MapIndexed(array, func(index, value int) int {
-	//	if predicate(index, value) {
-	//		return 1
-	//	} else {
-	//		return 0
-	//	}
-	//})
-	//positions := parallel.BlockedScan(flags)
-	result := make([]int, b[0])
 	filterFinalizeImpl(array, 0, len(array), 0, b, 0, result, blockSize)
 
-	//parallel.PFor(dv, func(index int) {
-	//	prev := 0
-	//	k := s - 1 + index
-	//	if index > 0 {
-	//		prev = b[k-1]
-	//	}
-	//	//fmt.Printf("%d %d\n", b[k], prev)
-	//	for i := 0; i < (b[k] - prev); i++ {
-	//		//fmt.Printf("%d %d\n", prev+i, blockSize*index+i)
-	//		result[prev+i] = array[blockSize*index+i]
-	//	}
-	//})
-	//fmt.Printf("%v\n", result)
-
-	return result
+	return b[0]
 }
 
 func filterReduceImpl(array []int, l int, r int, x int, reduced []int, predicate func(index int, value int) bool, blockSize int) {
@@ -109,10 +79,10 @@ func filterFinalizeImpl(array []int, l int, r int, x int, reduced []int, prev in
 		}
 	} else {
 		m := (l + r) / 2
-		filterFinalizeImpl(array, l, m, x*2+1, reduced, prev, result, blockSize)
-		filterFinalizeImpl(array, m, r, x*2+2, reduced, reduced[x*2+1], result, blockSize)
-		//parallel.Fork2Join(func() {
-		//}, func() {
-		//})
+		parallel.Fork2Join(func() {
+			filterFinalizeImpl(array, l, m, x*2+1, reduced, prev, result, blockSize)
+		}, func() {
+			filterFinalizeImpl(array, m, r, x*2+2, reduced, reduced[x*2+1], result, blockSize)
+		})
 	}
 }

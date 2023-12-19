@@ -3,19 +3,19 @@ package parallel
 import "sync"
 
 func Fork2Join(body1 func(), body2 func()) {
-	//var wg sync.WaitGroup
-	//wg.Add(2)
-	//go func() {
-	//	body1()
-	//	wg.Done()
-	//}()
-	//go func() {
-	//	body2()
-	//	wg.Done()
-	//}()
-	//wg.Wait()
-	body1()
-	body2()
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		body1()
+		wg.Done()
+	}()
+	go func() {
+		body2()
+		wg.Done()
+	}()
+	wg.Wait()
+	//body1()
+	//body2()
 }
 
 var PForDivider = 4

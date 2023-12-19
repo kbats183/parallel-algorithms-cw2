@@ -13,6 +13,7 @@ func (ParallelBFS) BFS(graph Graph) []int {
 	d[0].Store(1)
 
 	currentFrontier := []int{0}
+	arr1 := make([]int, graph.N())
 
 	for i := 0; i < graph.N(); i++ {
 		positionsC := parallel.Map(currentFrontier, func(v int) int {
@@ -50,9 +51,10 @@ func (ParallelBFS) BFS(graph Graph) []int {
 			}
 		})
 
-		currentFrontier = pfilter.Filter(newFrontier, func(index int, value int) bool {
+		newSize := pfilter.Filter(newFrontier, func(index int, value int) bool {
 			return value != 0
-		})
+		}, arr1)
+		currentFrontier = arr1[:newSize]
 		if len(currentFrontier) == 0 {
 			break
 		}
