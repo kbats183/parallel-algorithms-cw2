@@ -7,58 +7,58 @@ import (
 
 func TestFilter(t *testing.T) {
 	result := make([]int, 1024)
-	cnt := Filter([]int{1}, func(index int, value int) bool {
+	cnt := FilterInplace([]int{1}, func(index int, value int) bool {
 		return true
 	}, result)
 	if !slices.Equal(result[:cnt], []int{1}) {
 		t.Error("Test 1.1")
 	}
-	cnt = Filter([]int{1}, func(index int, value int) bool {
+	cnt = FilterInplace([]int{1}, func(index int, value int) bool {
 		return false
 	}, result)
 	if !slices.Equal(result[:cnt], []int{}) {
 		t.Error("Test 1.2")
 	}
 
-	cnt = Filter([]int{1, 2}, func(index int, value int) bool {
+	cnt = FilterInplace([]int{1, 2}, func(index int, value int) bool {
 		return true
 	}, result)
 	if !slices.Equal(result[:cnt], []int{1, 2}) {
 		t.Error("Test 2.anybody")
 	}
-	cnt = Filter([]int{1, 2}, func(index int, value int) bool {
+	cnt = FilterInplace([]int{1, 2}, func(index int, value int) bool {
 		return false
 	}, result)
 	if !slices.Equal(result[:cnt], []int{}) {
 		t.Error("Test 2.nobody")
 	}
-	cnt = Filter([]int{1, 2}, func(index int, value int) bool {
+	cnt = FilterInplace([]int{1, 2}, func(index int, value int) bool {
 		return index%2 == 0
 	}, result)
 	if !slices.Equal(result[:cnt], []int{1}) {
 		t.Error("Test 2.even")
 	}
-	cnt = Filter([]int{1, 2}, func(index int, value int) bool {
+	cnt = FilterInplace([]int{1, 2}, func(index int, value int) bool {
 		return index%2 == 1
 	}, result)
 	if !slices.Equal(result[:cnt], []int{2}) {
 		t.Error("Test 2.odd")
 	}
 
-	cnt = Filter([]int{1, 2, 3, 4, 5}, func(index int, value int) bool {
+	cnt = FilterInplace([]int{1, 2, 3, 4, 5}, func(index int, value int) bool {
 		return value%2 == 0
 	}, result)
 	if !slices.Equal(result[:cnt], []int{2, 4}) {
 		t.Error("Test 3.even")
 	}
-	cnt = Filter([]int{1, 2, 3, 4, 5}, func(index int, value int) bool {
+	cnt = FilterInplace([]int{1, 2, 3, 4, 5}, func(index int, value int) bool {
 		return value%2 == 1
 	}, result)
 	if !slices.Equal(result[:cnt], []int{1, 3, 5}) {
 		t.Error("Test 3.odd")
 	}
 
-	cnt = Filter([]int{1, 2, 3, 4, 5, 6, 7, 8}, func(index int, value int) bool {
+	cnt = FilterInplace([]int{1, 2, 3, 4, 5, 6, 7, 8}, func(index int, value int) bool {
 		return value <= 1 || value > 4 && value%2 == 0
 	}, result)
 	if !slices.Equal(result[:cnt], []int{1, 6, 8}) {
@@ -76,7 +76,7 @@ func TestFilterHuge(t *testing.T) {
 			ans = append(ans, i)
 		}
 	}
-	cnt := Filter(arr, func(index int, value int) bool {
+	cnt := FilterInplace(arr, func(index int, value int) bool {
 		return value%3 == 2 || value%7 == 5
 	}, res)
 	if !slices.Equal(res[:cnt], ans) {

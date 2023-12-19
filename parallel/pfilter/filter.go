@@ -4,7 +4,31 @@ import (
 	"github.com/kbats183/parallel-algorithms-cw2/parallel"
 )
 
-func Filter(array []int, predicate func(index int, value int) bool, result []int) int {
+func Filter(array []int, predicate func(index int, value int) bool) []int {
+	if len(array) == 0 {
+		return []int{}
+	}
+
+	dv := parallel.PForDivider
+	if len(array) < dv {
+		dv = len(array)
+	}
+	blockSize := (len(array) + dv - 1) / dv
+	if blockSize < 1 {
+		blockSize = 1
+	}
+
+	s := parallel.Pow2Size(dv)
+	b := make([]int, (s<<1)-1)
+	filterReduceImpl(array, 0, len(array), 0, b, predicate, blockSize)
+	filterScanPropagate(b, 0, len(array), 0, 0, blockSize)
+	result := make([]int, b[0])
+	filterFinalizeImpl(array, 0, len(array), 0, b, 0, result, blockSize)
+
+	return result
+}
+
+func FilterInplace(array []int, predicate func(index int, value int) bool, result []int) int {
 	if len(array) == 0 {
 		return 0
 	}

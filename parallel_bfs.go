@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/kbats183/parallel-algorithms-cw2/parallel"
+	"github.com/kbats183/parallel-algorithms-cw2/parallel/pfilter"
 	"sync/atomic"
 )
 
@@ -11,6 +12,7 @@ func (ParallelBFS) BFS(graph Graph) []int {
 	d := make([]int, graph.N())
 	dd := make([]atomic.Int32, graph.N())
 	dd[0].Store(1)
+	d[0] = 1
 
 	arr1 := make([]int, graph.N())
 	//positionsC := make([]int, graph.N())
@@ -28,6 +30,7 @@ func (ParallelBFS) BFS(graph Graph) []int {
 			return c
 		})
 		positions := parallel.BlockedScan(positionsC)
+		//fmt.Printf("p:%v\n", positionsC)
 
 		newFrontier := make([]int, positions[len(positions)-1])
 		//currentFrontier = currentFrontier
@@ -49,17 +52,23 @@ func (ParallelBFS) BFS(graph Graph) []int {
 			}
 		})
 
-		//newSize := pfilter.Filter(newFrontier[:newFrontierLen], func(index int, value int) bool {
-		//	return value != 0
-		//}, arr1)
-		newSize := sequenceFilter(newFrontier, func(index int, value int) bool {
+		//fmt.Printf("n:%v\n", newFrontier)
+
+		newSize := pfilter.FilterInplace(newFrontier, func(index int, value int) bool {
 			return value != 0
 		}, arr1)
+		//newSize := sequenceFilter(newFrontier, func(index int, value int) bool {
+		//	return value != 0
+		//}, arr1)
 		currentFrontier = arr1[:newSize]
 		if len(currentFrontier) == 0 {
 			break
 		}
 	}
+
+	parallel.PFor(graph.N(), func(index int) {
+		d[index]--
+	})
 
 	return d
 }
