@@ -2,56 +2,57 @@ package main
 
 import (
 	"github.com/kbats183/parallel-algorithms-cw2/parallel"
-	"github.com/kbats183/parallel-algorithms-cw2/parallel/pfilter"
 	"sync/atomic"
 )
 
 type ParallelBFS struct{}
 
 func (ParallelBFS) BFS(graph Graph) []int {
-	d := make([]atomic.Int32, graph.N())
-	d[0].Store(1)
+	d := make([]int, graph.N())
+	dd := make([]atomic.Int32, graph.N())
+	dd[0].Store(1)
 
-	currentFrontier := []int{0}
 	arr1 := make([]int, graph.N())
+	//positionsC := make([]int, graph.N())
+	//newFrontier := make([]int, graph.N())
+	currentFrontier := []int{0}
 
 	for i := 0; i < graph.N(); i++ {
 		positionsC := parallel.Map(currentFrontier, func(v int) int {
 			c := 0
 			for _, u := range graph.Edge(v) {
-				if d[u].Load() == 0 {
+				if d[u] == 0 {
 					c++
 				}
 			}
 			return c
 		})
 		positions := parallel.BlockedScan(positionsC)
-		//fmt.Printf("d: %v\n", atomicInt32ArrayToArray(d))
-		//fmt.Printf("f: %v\n", currentFrontier)
-		//fmt.Printf("p: %v\n", positionsC)
-		//fmt.Printf("p: %v\n", positions)
-		//fmt.Printf("\n")
 
 		newFrontier := make([]int, positions[len(positions)-1])
 		//currentFrontier = currentFrontier
 
 		parallel.PFor(len(currentFrontier), func(index int) {
 			v := currentFrontier[index]
-			dv := d[v].Load() + 1
+			dv := d[v] + 1
 			idx := 0
 			delta := 0
 			if index > 0 {
 				delta = positions[index-1]
 			}
 			for _, u := range graph.Edge(v) {
-				if d[u].CompareAndSwap(0, dv) {
+				if dd[u].CompareAndSwap(0, int32(dv)) {
+					d[u] = dv
 					newFrontier[delta+idx] = u
 					idx++
 				}
 			}
 		})
 
-		newSize := pfilter.Filter(newFrontier, func(index int, value int) bool {
+		//newSize := pfilter.Filter(newFrontier[:newFrontierLen], func(index int, value int) bool {
+		//	return value != 0
+		//}, arr1)
+		newSize := sequenceFilter(newFrontier, func(index int, value int) bool {
 			return value != 0
 		}, arr1)
 		currentFrontier = arr1[:newSize]
@@ -60,7 +61,7 @@ func (ParallelBFS) BFS(graph Graph) []int {
 		}
 	}
 
-	return atomicInt32ArrayToArray(d)
+	return d
 }
 
 func atomicInt32ArrayToArray(array []atomic.Int32) []int {
@@ -69,4 +70,17 @@ func atomicInt32ArrayToArray(array []atomic.Int32) []int {
 		result[index] = int(array[index].Load()) - 1
 	})
 	return result
+}
+
+func sequenceFilter(array []int, predicate func(index int, value int) bool, result []int) int {
+	cnt := 0
+	j := 0
+	for i := 0; i < len(array); i++ {
+		if predicate(i, array[i]) {
+			result[j] = array[i]
+			j++
+			cnt++
+		}
+	}
+	return j
 }
