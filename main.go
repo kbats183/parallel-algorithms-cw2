@@ -12,7 +12,6 @@ func testImplementation(graph *CubeGridGraph, implementation BFSImplementation) 
 	start := time.Now()
 	result := implementation.BFS(graph)
 	t := time.Since(start)
-	log.Printf("done step")
 	expectedDist := make([]int, graph.N())
 
 	for f := 0; f < graph.N(); f++ {

@@ -1,6 +1,6 @@
 package parallel
 
-func pow2size(n int) int {
+func Pow2Size(n int) int {
 	if n == 0 {
 		return 0
 	}
@@ -15,7 +15,7 @@ func Scan(array []int) []int {
 	if len(array) == 0 {
 		return array
 	}
-	s := pow2size(len(array))
+	s := Pow2Size(len(array))
 	b := make([]int, (s<<1)-1)
 	c := make([]int, len(array))
 	blockSize := (len(array) + PForDivider - 1) / PForDivider
@@ -57,7 +57,7 @@ func BlockedScan(array []int) []int {
 	if len(array) == 0 {
 		return array
 	}
-	s := pow2size(PForDivider)
+	s := Pow2Size(PForDivider)
 	b := make([]int, (s<<1)-1)
 	c := make([]int, len(array))
 	blockSize := (len(array) + PForDivider - 1) / PForDivider

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/kbats183/parallel-algorithms-cw2/parallel"
+	"github.com/kbats183/parallel-algorithms-cw2/parallel/pfilter"
 	"sync/atomic"
 )
 
@@ -49,7 +50,7 @@ func (ParallelBFS) BFS(graph Graph) []int {
 			}
 		})
 
-		currentFrontier = parallel.Filter(newFrontier, func(index int, value int) bool {
+		currentFrontier = pfilter.Filter(newFrontier, func(index int, value int) bool {
 			return value != 0
 		})
 		if len(currentFrontier) == 0 {
