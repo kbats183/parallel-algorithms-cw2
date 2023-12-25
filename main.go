@@ -40,17 +40,17 @@ func testImplementationMultiple(graph *CubeGridGraph, implementation BFSImplemen
 
 func main() {
 	runtime.GOMAXPROCS(4)
-	g := CubeGridGraph{Side: 500}
+	g := &CubeGridGraph{Side: 500}
 
 	var sequentialBFS SequentialBFS
 	var parallelBFS ParallelBFS
 
-	ts := testImplementationMultiple(&g, &sequentialBFS, 5)
+	ts := testImplementationMultiple(g, &sequentialBFS, 5)
 	log.Printf("Avg time for sequentional implementation %s", ts.String())
 
 	parallel.PForDivider = 4
 	for i := 0; i < 7; i++ {
-		tp := testImplementationMultiple(&g, &parallelBFS, 5)
+		tp := testImplementationMultiple(g, &parallelBFS, 5)
 		log.Printf("Avg time for parallel implementation %s (%d)", tp.String(), parallel.PForDivider)
 		log.Printf("Speed up for %v", float64(ts)/float64(tp))
 		parallel.PForDivider *= 2

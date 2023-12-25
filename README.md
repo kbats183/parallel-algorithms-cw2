@@ -4,15 +4,15 @@
 
 Усредненные результаты (в миллисекундах):
 * Sequential algorithm time is `29.8 s`
-* Parallel algorithm (blockSize = N / 4) time is `20.8 s`
-* Parallel algorithm (blockSize = N / 8) time is `18.3 s`
-* Parallel algorithm (blockSize = N / 16) time is `17.9 s`
-* Parallel algorithm (blockSize = N / 32) time is `17.7 s`
-* Parallel algorithm (blockSize = N / 64) time is `17.7 s`
-* Parallel algorithm (blockSize = N / 128) time is `18.7 s`
-* Parallel algorithm (blockSize = N / 256) time is `18.7 s`
+* Parallel algorithm (blockSize = N / 4) time is `13.3 s`
+* Parallel algorithm (blockSize = N / 8) time is `11.7 s`
+* Parallel algorithm (blockSize = N / 16) time is `11.4 s`
+* Parallel algorithm (blockSize = N / 32) time is `11.1 s`
+* Parallel algorithm (blockSize = N / 64) time is `11.3 s`
+* Parallel algorithm (blockSize = N / 128) time is `11.4 s`
+* Parallel algorithm (blockSize = N / 256) time is `11.6 s`
 
-Ускорение в лушем случае составило `1.668`, что очень плохо.
+Ускорение в лушем случае составило `2.674`, что очень плохо.
 
 Совершенно не понимаю, почему не получается достич лучших результатов при том, что реализован алгоритм с лекции.
 

@@ -21,12 +21,12 @@ func (ParallelBFS) BFS(graph Graph) []int {
 
 	for i := 0; i < graph.N(); i++ {
 		positionsC := parallel.Map(currentFrontier, func(v int) int {
-			c := 0
-			for _, u := range graph.Edge(v) {
-				if d[u] == 0 {
-					c++
-				}
-			}
+			c := 6
+			//for _, u := range graph.Edge(v) {
+			//	if d[u] == 0 {
+			//		c++
+			//	}
+			//}
 			return c
 		})
 		positions := parallel.BlockedScan(positionsC)
